@@ -1,0 +1,56 @@
+<head>
+    <meta charset="UTF-8" />
+    <title>WEB APIサンプル</title>
+    <script>
+        window.addEventListener("DOMContentLoaded", function(){
+            var button = document.getElementById('button');
+            // ボタン押下時の処理。
+            button.addEventListener("click", function(){
+                // 入力欄からキーワードを取得。
+                var input = document.getElementById("keyword");
+                var keyword = input.value;
+
+                // scriptタグを生成
+                var script = document.createElement('script');
+                // srcにFlickr APIのURLを指定　キーワードをURLエンコードしてtagsパラメーターに指定。
+                script.src = "https://api.flickr.com/services/feeds/photos_public.gne?format=json&tags=" + encodeURIComponent(keyword);
+                // Flickr APIの呼び出し
+                document.body.appendChild(script);
+                // 呼び出した後にscriptタグを削除
+                document.body.removeChild(script);
+            })
+        });
+
+        // JSONデータを受け取る関数
+        function jsonFlickrFeed(data){
+            // 結果表示領域をクリア
+            var photo_list = document.getElementById("photo_list");
+            photo_list.innerHTML = "";
+            
+            // // itemsキーで検索結果を取得（こっちのほうが速いが可読性が低い）
+            // for (i=0; i<data.items.length; i++){
+            //     // 検索結果内の画像情報を取得
+            //     var item = data.items[i];
+            //     // img要素を生成
+            //     var img = document.createElement("img");
+            //     // img要素のsrcに検索結果の画像のURLを指定
+            //     img.src = item.media.m;
+            //     photo_list.appendChild(img);
+            // }
+
+            // itemsキーで検索結果を取得（こっちのほうが遅いが可読性が高い）
+            data.items.forEach(item => {
+                // img要素を生成
+                var img = document.createElement("img");
+                // img要素のsrcに検索結果の画像のURLを指定
+                img.src = item.media.m;
+                photo_list.appendChild(img);
+            });
+        }
+    </script>
+</head>
+<body>
+    <input type="text" id="keyword" name="keyword">
+    <input type="button" id="button" value="検索">
+    <div id="photo_list"></div>
+</body>
